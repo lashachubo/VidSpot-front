@@ -49,9 +49,7 @@ function App() {
           width: "400px",
         }}
       >
-        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
-          🎯 Video Object Search
-        </h2>
+        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>VidSpot</h2>
         <form
           onSubmit={handleSubmit}
           style={{ display: "flex", flexDirection: "column", gap: "15px" }}
@@ -89,7 +87,7 @@ function App() {
               cursor: "pointer",
             }}
           >
-            🔍 Search
+            Search
           </button>
         </form>
         {result && (
