@@ -96,7 +96,7 @@ function App() {
               marginTop: "20px",
               padding: "10px",
               backgroundColor: "#e9f7ef",
-              border: "1px solid #c3e6cb",
+              border: "1px solidrgb(77, 95, 81)",
               borderRadius: "5px",
               color: "#155724",
             }}
