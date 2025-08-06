@@ -80,6 +80,12 @@ function App() {
             value={targetClass}
             onChange={(e) => setTargetClass(e.target.value)}
             placeholder="Enter object to search (e.g., car, person)"
+            style={{
+              padding: "12px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              fontSize: "14px",
+            }}
           />
           <button
             type="submit"
@@ -93,6 +99,8 @@ function App() {
               cursor: "pointer",
               transition: "background-color 0.2s",
             }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#0056b3")}
+            onMouseOut={(e) => (e.target.style.backgroundColor = "#007bff")}
           >
             Search
           </button>
