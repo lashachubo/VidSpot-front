@@ -32,27 +32,36 @@ function App() {
     <div
       style={{
         display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
         justifyContent: "center",
+        alignItems: "center",
         minHeight: "100vh",
-        backgroundColor: "#f4f6f8",
-        fontFamily: "Arial, sans-serif",
+        backgroundColor: "#f0f2f5",
+        fontFamily: "Segoe UI, sans-serif",
       }}
     >
       <div
         style={{
-          backgroundColor: "#fff",
-          padding: "30px",
-          borderRadius: "10px",
-          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-          width: "400px",
+          width: "100%",
+          maxWidth: "500px",
+          backgroundColor: "#ffffff",
+          padding: "40px",
+          borderRadius: "12px",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
         }}
       >
-        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>VidSpot</h2>
+        <h2
+          style={{
+            textAlign: "center",
+            marginBottom: "30px",
+            fontSize: "24px",
+            color: "#333",
+          }}
+        >
+          Video Object Search
+        </h2>
         <form
           onSubmit={handleSubmit}
-          style={{ display: "flex", flexDirection: "column", gap: "15px" }}
+          style={{ display: "flex", flexDirection: "column", gap: "20px" }}
         >
           <input
             type="file"
@@ -60,31 +69,29 @@ function App() {
             onChange={(e) => setVideo(e.target.files[0])}
             required
             style={{
+              padding: "12px",
+              borderRadius: "8px",
               border: "1px solid #ccc",
-              padding: "10px",
-              borderRadius: "5px",
+              fontSize: "14px",
             }}
           />
           <input
             type="text"
             value={targetClass}
             onChange={(e) => setTargetClass(e.target.value)}
-            placeholder="Search object (e.g., person)"
-            style={{
-              border: "1px solid #ccc",
-              padding: "10px",
-              borderRadius: "5px",
-            }}
+            placeholder="Enter object to search (e.g., car, person)"
           />
           <button
             type="submit"
             style={{
               backgroundColor: "#007bff",
               color: "#fff",
-              padding: "10px",
+              padding: "12px",
               border: "none",
-              borderRadius: "5px",
+              borderRadius: "8px",
+              fontSize: "16px",
               cursor: "pointer",
+              transition: "background-color 0.2s",
             }}
           >
             Search
@@ -93,12 +100,13 @@ function App() {
         {result && (
           <div
             style={{
-              marginTop: "20px",
-              padding: "10px",
-              backgroundColor: "#e9f7ef",
-              border: "1px solid #c3e6cb",
-              borderRadius: "5px",
-              color: "#155724",
+              marginTop: "25px",
+              padding: "15px",
+              backgroundColor: "#e6f4ea",
+              border: "1px solid #b7dfc4",
+              borderRadius: "8px",
+              color: "#245c36",
+              fontSize: "14px",
             }}
           >
             {result}
