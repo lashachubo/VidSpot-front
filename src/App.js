@@ -25,7 +25,7 @@ function App() {
   return (
     <div className="app-container">
       <div className="form-container">
-        <h2 className="title">🎥 Object Finder</h2>
+        <h2 className="title"> Object Finder</h2>
         <FileUpload setVideo={setVideo} />
         <SearchForm
           targetClass={targetClass}
