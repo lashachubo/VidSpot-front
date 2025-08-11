@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { FileUpload } from "./components/FileUpload";
+import { SearchForm } from "./components/SearchForm";
+import { ResultMessage } from "./components/ResultMessage";
+import { fetchSearchResult } from "./services/searchService";
+
+import "./styles.css"; // External styles for overall layout
 
 function App() {
   const [video, setVideo] = useState(null);
@@ -9,117 +14,25 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!video) return;
-
-    const formData = new FormData();
-    formData.append("video", video);
-    formData.append("target_class", targetClass);
-
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/search",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-      setResult(response.data.message);
+      const response = await fetchSearchResult(video, targetClass);
+      setResult(response.message);
     } catch (err) {
       setResult("Error: " + err.message);
     }
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        backgroundColor: "#f0f2f5",
-        fontFamily: "Segoe UI, sans-serif",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "500px",
-          backgroundColor: "#ffffff",
-          padding: "40px",
-          borderRadius: "12px",
-          boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
-        }}
-      >
-        <h2
-          style={{
-            textAlign: "center",
-            marginBottom: "30px",
-            fontSize: "24px",
-            color: "#333",
-          }}
-        >
-          Video Object Search
-        </h2>
-        <form
-          onSubmit={handleSubmit}
-          style={{ display: "flex", flexDirection: "column", gap: "20px" }}
-        >
-          <input
-            type="file"
-            accept="video/*"
-            onChange={(e) => setVideo(e.target.files[0])}
-            required
-            style={{
-              padding: "12px",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              fontSize: "14px",
-            }}
-          />
-          <input
-            type="text"
-            value={targetClass}
-            onChange={(e) => setTargetClass(e.target.value)}
-            placeholder="Enter object to search (e.g., car, person)"
-            style={{
-              padding: "12px",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              fontSize: "14px",
-            }}
-          />
-          <button
-            type="submit"
-            style={{
-              backgroundColor: "#007bff",
-              color: "#fff",
-              padding: "12px",
-              border: "none",
-              borderRadius: "8px",
-              fontSize: "16px",
-              cursor: "pointer",
-              transition: "background-color 0.2s",
-            }}
-            onMouseOver={(e) => (e.target.style.backgroundColor = "#0056b3")}
-            onMouseOut={(e) => (e.target.style.backgroundColor = "#007bff")}
-          >
-            Search
-          </button>
-        </form>
-        {result && (
-          <div
-            style={{
-              marginTop: "25px",
-              padding: "15px",
-              backgroundColor: "#e6f4ea",
-              border: "1px solid #b7dfc4",
-              borderRadius: "8px",
-              color: "#245c36",
-              fontSize: "14px",
-            }}
-          >
-            {result}
-          </div>
-        )}
+    <div className="app-container">
+      <div className="form-container">
+        <h2 className="title">🎥 Object Finder</h2>
+        <FileUpload setVideo={setVideo} />
+        <SearchForm
+          targetClass={targetClass}
+          setTargetClass={setTargetClass}
+          handleSubmit={handleSubmit}
+        />
+        <ResultMessage result={result} />
       </div>
     </div>
   );
