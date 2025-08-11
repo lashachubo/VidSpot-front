@@ -1,115 +1,128 @@
-return (
-  <div
-    style={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      minHeight: "100vh",
-      background: "linear-gradient(135deg, #e0f7fa 0%, #fce4ec 100%)",
-      fontFamily: "Inter, sans-serif",
-      padding: "20px",
-    }}
-  >
+import React, { useState } from "react";
+import axios from "axios";
+
+function App() {
+  const [video, setVideo] = useState(null);
+  const [targetClass, setTargetClass] = useState("person");
+  const [result, setResult] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!video) return;
+
+    const formData = new FormData();
+    formData.append("video", video);
+    formData.append("target_class", targetClass);
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/search",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      setResult(response.data.message);
+    } catch (err) {
+      setResult("Error: " + err.message);
+    }
+  };
+
+  return (
     <div
       style={{
-        width: "100%",
-        maxWidth: "550px",
-        backgroundColor: "#ffffff",
-        padding: "40px",
-        borderRadius: "16px",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        backgroundColor: "#f0f2f5",
+        fontFamily: "Segoe UI, sans-serif",
       }}
     >
-      <h2
+      <div
         style={{
-          textAlign: "center",
-          marginBottom: "25px",
-          fontSize: "28px",
-          color: "#222",
+          width: "100%",
+          maxWidth: "500px",
+          backgroundColor: "#ffffff",
+          padding: "40px",
+          borderRadius: "12px",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
         }}
       >
-        🎥 Smart Video Object Finder
-      </h2>
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "20px",
-        }}
-      >
-        <label style={{ fontWeight: "600", fontSize: "14px", color: "#333" }}>
-          Upload Video:
-        </label>
-        <input
-          type="file"
-          accept="video/*"
-          onChange={(e) => setVideo(e.target.files[0])}
-          required
+        <h2
           style={{
-            padding: "14px",
-            borderRadius: "10px",
-            border: "1px solid #ddd",
-            fontSize: "14px",
-            backgroundColor: "#fafafa",
-          }}
-        />
-
-        <label style={{ fontWeight: "600", fontSize: "14px", color: "#333" }}>
-          Object to Find:
-        </label>
-        <input
-          type="text"
-          value={targetClass}
-          onChange={(e) => setTargetClass(e.target.value)}
-          placeholder="e.g., person, car, dog"
-          style={{
-            padding: "14px",
-            borderRadius: "10px",
-            border: "1px solid #ddd",
-            fontSize: "14px",
-            backgroundColor: "#fafafa",
-          }}
-        />
-
-        <button
-          type="submit"
-          style={{
-            background: "linear-gradient(to right, #4facfe, #00f2fe)",
-            color: "#fff",
-            padding: "14px",
-            border: "none",
-            borderRadius: "10px",
-            fontSize: "16px",
-            fontWeight: "600",
-            cursor: "pointer",
-            transition: "transform 0.2s ease-in-out",
-          }}
-          onMouseOver={(e) => (e.target.style.transform = "scale(1.03)")}
-          onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
-        >
-          🔍 Search Object
-        </button>
-      </form>
-
-      {result && (
-        <div
-          style={{
-            marginTop: "30px",
-            padding: "18px",
-            borderRadius: "10px",
-            fontSize: "15px",
-            fontWeight: "500",
-            color: result.startsWith("Error") ? "#b00020" : "#1b5e20",
-            backgroundColor: result.startsWith("Error") ? "#fdecea" : "#e8f5e9",
-            border: `1px solid ${
-              result.startsWith("Error") ? "#f5c6cb" : "#c8e6c9"
-            }`,
+            textAlign: "center",
+            marginBottom: "30px",
+            fontSize: "24px",
+            color: "#333",
           }}
         >
-          {result}
-        </div>
-      )}
+          Video Object Search
+        </h2>
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+        >
+          <input
+            type="file"
+            accept="video/*"
+            onChange={(e) => setVideo(e.target.files[0])}
+            required
+            style={{
+              padding: "12px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              fontSize: "14px",
+            }}
+          />
+          <input
+            type="text"
+            value={targetClass}
+            onChange={(e) => setTargetClass(e.target.value)}
+            placeholder="Enter object to search (e.g., car, person)"
+            style={{
+              padding: "12px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              fontSize: "14px",
+            }}
+          />
+          <button
+            type="submit"
+            style={{
+              backgroundColor: "#007bff",
+              color: "#fff",
+              padding: "12px",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "16px",
+              cursor: "pointer",
+              transition: "background-color 0.2s",
+            }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#0056b3")}
+            onMouseOut={(e) => (e.target.style.backgroundColor = "#007bff")}
+          >
+            Search
+          </button>
+        </form>
+        {result && (
+          <div
+            style={{
+              marginTop: "25px",
+              padding: "15px",
+              backgroundColor: "#e6f4ea",
+              border: "1px solid #b7dfc4",
+              borderRadius: "8px",
+              color: "#245c36",
+              fontSize: "14px",
+            }}
+          >
+            {result}
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+}
+
+export default App;
