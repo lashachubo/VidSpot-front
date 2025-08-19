@@ -4,7 +4,7 @@ import { SearchForm } from "./components/SearchForm";
 import { ResultMessage } from "./components/ResultMessage";
 import { fetchSearchResult } from "./services/searchService";
 
-import "./styles.css"; // External styles for overall layout
+import "./styles.css";
 
 function App() {
   const [video, setVideo] = useState(null);
