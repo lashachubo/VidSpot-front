@@ -1,16 +1,26 @@
 import React, { useState } from "react";
 // Assuming lucide-react is available in the environment
-import { Upload, Search, CheckCircle, XCircle, Video } from "lucide-react";
+import {
+  Upload,
+  Search,
+  CheckCircle,
+  XCircle,
+  Video,
+  TrendingUp,
+} from "lucide-react";
 
 // Component 1: Header
 const Header = () => {
   return (
-    <header className="bg-gradient-to-r from-indigo-600 to-purple-600 shadow-xl py-6 px-6">
+    <header className="bg-gradient-to-r from-indigo-600 to-purple-700 shadow-2xl py-6 px-6 border-b border-purple-500/50">
       <div className="max-w-4xl mx-auto flex items-center gap-3">
         <Video className="text-white" size={32} />
-        <h1 className="text-3xl font-extrabold text-white font-sans">
-          VidSpot
+        <h1 className="text-3xl font-extrabold text-white font-sans tracking-wide">
+          VidSpot AI
         </h1>
+        <div className="hidden sm:block ml-auto text-sm text-purple-200 bg-purple-900/30 px-3 py-1 rounded-full border border-purple-700 font-medium">
+          YOLOv8 Detection
+        </div>
       </div>
     </header>
   );
@@ -27,13 +37,13 @@ const FileUpload = ({ video, setVideo }) => {
 
   return (
     <div className="w-full">
-      <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-indigo-400 rounded-xl cursor-pointer bg-indigo-50 hover:bg-indigo-100 transition-all duration-300 p-4">
+      <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-indigo-500 rounded-xl cursor-pointer bg-gray-700 hover:bg-gray-600 transition-all duration-300 p-4 shadow-inner shadow-gray-900">
         <div className="flex flex-col items-center justify-center pt-5 pb-6">
-          <Upload className="text-indigo-600 mb-3" size={48} />
-          <p className="mb-2 text-base text-gray-800 font-semibold">
+          <Upload className="text-indigo-400 mb-3" size={48} />
+          <p className="mb-2 text-base text-white font-semibold">
             {video ? video.name : "Click to upload video"}
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-400">
             {video
               ? "File ready. Click again to change."
               : "MP4, AVI, MOV (Max file size for demo environments may vary)"}
@@ -59,14 +69,14 @@ const SearchForm = ({
 }) => {
   return (
     <form onSubmit={handleSubmit} className="w-full">
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1 relative">
           <input
             type="text"
             value={targetClass}
             onChange={(e) => setTargetClass(e.target.value)}
             placeholder="Enter object to search (e.g., person, car, dog)"
-            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition-colors shadow-sm text-gray-800 bg-white"
+            className="w-full px-5 py-3 border-2 border-purple-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 transition-colors shadow-lg text-white bg-gray-700 placeholder-gray-400"
             disabled={isLoading}
             required
           />
@@ -74,7 +84,8 @@ const SearchForm = ({
         <button
           type="submit"
           disabled={isLoading || !targetClass.trim()}
-          className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:scale-[1.01]"
+          // Enhanced button style with gradient and dynamic hover effect
+          className="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-bold uppercase tracking-wider hover:from-purple-500 hover:to-indigo-500 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 shadow-xl shadow-purple-900/50 hover:shadow-purple-700/70 transform hover:-translate-y-0.5"
         >
           {isLoading ? (
             <svg
@@ -100,7 +111,7 @@ const SearchForm = ({
           ) : (
             <Search size={20} />
           )}
-          {isLoading ? "Searching..." : "Search"}
+          {isLoading ? "Searching..." : "Search Video"}
         </button>
       </div>
     </form>
@@ -115,28 +126,40 @@ const ResultMessage = ({ result }) => {
   const isError =
     result.first_frame === -1 ||
     result.message?.includes("Error") ||
-    result.message?.includes("could not connect");
+    result.message?.includes("could not connect") ||
+    result.message?.includes("FATAL");
+
+  // Helper function to calculate time in seconds
+  const calculateSeconds = (frame, fps) => {
+    if (fps > 0) {
+      return (frame / fps).toFixed(2); // Keep two decimal places for seconds
+    }
+    return "N/A";
+  };
+
+  const firstDetectionSecond = calculateSeconds(result.first_frame, result.fps);
+  const lastDetectionSecond = calculateSeconds(result.last_frame, result.fps);
 
   return (
     <div
-      className={`w-full p-5 rounded-xl flex items-start gap-4 transition-all duration-300 ${
+      className={`w-full p-6 rounded-2xl flex items-start gap-4 transition-all duration-300 shadow-inner ${
         isError
-          ? "bg-red-50 border-2 border-red-300"
-          : "bg-green-50 border-2 border-green-300"
+          ? "bg-red-900/50 border-2 border-red-500"
+          : "bg-green-900/50 border-2 border-green-500"
       }`}
     >
       {isError ? (
-        <XCircle className="text-red-500 flex-shrink-0 mt-0.5" size={24} />
+        <XCircle className="text-red-400 flex-shrink-0 mt-0.5" size={24} />
       ) : (
         <CheckCircle
-          className="text-green-600 flex-shrink-0 mt-0.5"
+          className="text-green-400 flex-shrink-0 mt-0.5"
           size={24}
         />
       )}
       <div>
         <p
-          className={`text-lg font-bold ${
-            isError ? "text-red-800" : "text-green-800"
+          className={`text-xl font-extrabold ${
+            isError ? "text-red-200" : "text-green-200"
           }`}
         >
           {isError
@@ -145,25 +168,46 @@ const ResultMessage = ({ result }) => {
         </p>
         <p
           className={`text-sm mt-1 ${
-            isError ? "text-red-700" : "text-green-700"
+            isError ? "text-red-400" : "text-green-400"
           }`}
         >
           {result.message || "Operation completed."}
         </p>
+
+        {/* Updated Detection Details Block */}
         {result.first_frame !== undefined && result.first_frame !== -1 && (
-          <div className="mt-3 text-sm text-gray-700 bg-white p-3 rounded-lg border border-gray-200 inline-block">
-            <p className="font-semibold text-gray-800">Detection Frames:</p>
-            <div className="flex gap-4 mt-1">
-              <span className="font-medium">First frame: </span>
-              <span className="text-indigo-600 font-bold">
-                {result.first_frame}
-              </span>
-            </div>
-            <div className="flex gap-4 mt-1">
-              <span className="font-medium">Last frame: </span>
-              <span className="text-indigo-600 font-bold">
-                {result.last_frame}
-              </span>
+          <div className="mt-4 text-sm text-gray-300 bg-gray-700/70 p-4 rounded-xl border border-gray-600 inline-block">
+            <p className="font-bold text-white mb-2 flex items-center gap-1">
+              <TrendingUp size={16} className="text-purple-400" />
+              Detection Details
+            </p>
+            <div className="space-y-1">
+              <p>
+                <span className="font-medium">First detection: </span>
+                <span className="text-purple-400 font-bold">
+                  {firstDetectionSecond} sec
+                </span>
+                <span className="text-gray-400">
+                  {" "}
+                  ({result.first_frame} frame)
+                </span>
+              </p>
+              <p>
+                <span className="font-medium">Last detection: </span>
+                <span className="text-purple-400 font-bold">
+                  {lastDetectionSecond} sec
+                </span>
+                <span className="text-gray-400">
+                  {" "}
+                  ({result.last_frame} frame)
+                </span>
+              </p>
+              <p className="pt-2 border-t border-gray-600 mt-2">
+                <span className="font-medium">Video FPS: </span>
+                <span className="text-gray-300 font-semibold">
+                  {result.fps.toFixed(2)}
+                </span>
+              </p>
             </div>
           </div>
         )}
@@ -175,9 +219,10 @@ const ResultMessage = ({ result }) => {
 // Component 5: Footer
 const Footer = () => {
   return (
-    <footer className="bg-gray-200 border-t border-gray-300 py-4 text-center text-gray-600 text-sm mt-auto shadow-inner">
+    <footer className="bg-gray-900 border-t border-gray-800 py-4 text-center text-gray-400 text-sm mt-auto shadow-inner shadow-black/50">
       <div className="max-w-4xl mx-auto">
-        &copy; {new Date().getFullYear()} VidSpot | Powered by FastAPI & YOLOv8
+        &copy; {new Date().getFullYear()} VidSpot AI | Powered by FastAPI &
+        YOLOv8
       </div>
     </footer>
   );
@@ -190,11 +235,9 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Custom function to handle displaying non-detection or network error messages
   const showCustomMessage = (message, type = "error") => {
     setResult({
       message,
-      // Use -1 for error/not found cases to trigger the 'isError' state in ResultMessage
       first_frame: type === "error" ? -1 : undefined,
     });
   };
@@ -207,7 +250,10 @@ export default function App() {
       return;
     }
 
-    if (!targetClass.trim()) {
+    // Trim the target class
+    const trimmedTargetClass = targetClass.trim();
+
+    if (!trimmedTargetClass) {
       showCustomMessage("Please enter an object to search for.", "error");
       return;
     }
@@ -218,9 +264,8 @@ export default function App() {
     try {
       const formData = new FormData();
       formData.append("video", video);
-      formData.append("target_class", targetClass);
+      formData.append("target_class", trimmedTargetClass);
 
-      // The API URL matching the backend running on port 8000
       const apiUrl = "http://127.0.0.1:8000/search";
 
       const response = await fetch(apiUrl, {
@@ -231,7 +276,6 @@ export default function App() {
       const data = await response.json();
 
       if (!response.ok) {
-        // Handle HTTP errors (e.g., 404, 500)
         setResult({
           message:
             data.detail ||
@@ -240,7 +284,6 @@ export default function App() {
           first_frame: -1,
         });
       } else {
-        // Handle successful response (200 OK)
         setResult(data);
       }
     } catch (error) {
@@ -255,26 +298,24 @@ export default function App() {
   };
 
   return (
-    // Added font-sans to the main div
-    <div className="min-h-screen bg-gray-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-gray-950 flex flex-col font-sans">
       <Header />
 
-      <main className="flex-1 py-12 px-4 sm:px-6 lg:px-8">
+      <main className="flex-1 py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-10 space-y-8">
-            {/* Upload Section */}
+          <div className="bg-gray-800 rounded-3xl shadow-2xl shadow-purple-900/50 p-6 sm:p-10 space-y-10 border border-gray-700/50">
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <Upload size={24} className="text-indigo-600" />
-                Upload Video
+              <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                <Upload size={24} className="text-indigo-400" />
+                Upload Video Source
               </h2>
               <FileUpload video={video} setVideo={setVideo} />
             </div>
 
-            <div className="border-t border-gray-200 pt-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <Search size={24} className="text-purple-600" />
-                Search for Objects
+            <div className="border-t border-gray-700 pt-10">
+              <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                <Search size={24} className="text-purple-400" />
+                Search for Specific Objects
               </h2>
               <SearchForm
                 targetClass={targetClass}
@@ -285,48 +326,50 @@ export default function App() {
             </div>
 
             {result && (
-              <div className="border-t border-gray-200 pt-8">
+              <div className="border-t border-gray-700 pt-10">
                 <ResultMessage result={result} />
               </div>
             )}
 
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 mt-6">
-              <h3 className="font-bold text-blue-900 mb-3 text-lg">
+            <div className="bg-indigo-900/30 border border-indigo-600 rounded-xl p-5 mt-6 shadow-lg">
+              <h3 className="font-extrabold text-indigo-200 mb-3 text-lg">
                 How VidSpot Works:
               </h3>
-              <ul className="text-sm text-blue-800 space-y-2 list-none p-0">
+              <ul className="text-sm text-indigo-400 space-y-2 list-none p-0">
                 <li className="flex items-start gap-2">
                   <CheckCircle
                     size={16}
-                    className="flex-shrink-0 mt-0.5 text-blue-500"
+                    className="flex-shrink-0 mt-0.5 text-indigo-400"
                   />
                   <span>Upload your video file (MP4, MOV, etc.).</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle
                     size={16}
-                    className="flex-shrink-0 mt-0.5 text-blue-500"
-                  />
-                  <span>Specify the object name (e.g., 'dog', 'chair').</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle
-                    size={16}
-                    className="flex-shrink-0 mt-0.5 text-blue-500"
+                    className="flex-shrink-0 mt-0.5 text-indigo-400"
                   />
                   <span>
-                    The FastAPI backend, using YOLOv8, scans the video
-                    frame-by-frame.
+                    Specify the **COCO object name** (e.g., 'dog', 'chair').
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle
                     size={16}
-                    className="flex-shrink-0 mt-0.5 text-blue-500"
+                    className="flex-shrink-0 mt-0.5 text-indigo-400"
                   />
                   <span>
-                    The React frontend displays the first and last frame numbers
-                    where the object was detected.
+                    The FastAPI backend uses **YOLOv8** to rapidly scan the
+                    video frame-by-frame.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle
+                    size={16}
+                    className="flex-shrink-0 mt-0.5 text-indigo-400"
+                  />
+                  <span>
+                    The system provides precise **start/end times (seconds)** of
+                    the object's presence.
                   </span>
                 </li>
               </ul>
